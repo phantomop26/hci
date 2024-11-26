@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-center mb-4">Welcome to the Messaging App</h1>
+<p class="text-center text-muted">Select a chat type to start messaging.</p>
+
+<!-- Chat Tabs -->
+<ul class="nav nav-tabs mb-4" id="chatTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="private-chats-tab" data-bs-toggle="tab" data-bs-target="#private-chats" type="button" role="tab" aria-controls="private-chats" aria-selected="true">Private Chats</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="group-chats-tab" data-bs-toggle="tab" data-bs-target="#group-chats" type="button" role="tab" aria-controls="group-chats" aria-selected="false">Group Chats</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="available-chats-tab" data-bs-toggle="tab" data-bs-target="#available-chats" type="button" role="tab" aria-controls="available-chats" aria-selected="false">Available Chats</button>
+    </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content" id="chatTabsContent">
+    <!-- Private Chats -->
+    <div class="tab-pane fade show active" id="private-chats" role="tabpanel" aria-labelledby="private-chats-tab">
+        <h3>Private Chats</h3>
+        <ul class="list-group shadow-sm">
+            {% for user in users %}
+            <li class="list-group-item d-flex align-items-center">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="User" class="me-3" style="width: 40px; height: 40px; border-radius: 50%;">
+                <a href="{{ url_for('chat', recipient=user) }}" class="flex-grow-1">{{ user }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Group Chats -->
+    <div class="tab-pane fade" id="group-chats" role="tabpanel" aria-labelledby="group-chats-tab">
+        <h3>Group Chats</h3>
+        <ul class="list-group shadow-sm">
+            {% for group in groups.keys() %}
+            <li class="list-group-item d-flex align-items-center">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="Group" class="me-3" style="width: 40px; height: 40px; border-radius: 50%;">
+                <a href="{{ url_for('group_chat', group_name=group) }}" class="flex-grow-1">{{ group }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Available Chats -->
+    <div class="tab-pane fade" id="available-chats" role="tabpanel" aria-labelledby="available-chats-tab">
+        <h3>Available Chats</h3>
+        <ul class="list-group shadow-sm">
+            {% for group in available_chats["Group Chats"] %}
+            <li class="list-group-item d-flex align-items-center">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="Group" class="me-3" style="width: 40px; height: 40px; border-radius: 50%;">
+                <span class="flex-grow-1">{{ group }}</span>
+                <a href="{{ url_for('join_group', group_name=group) }}" class="btn btn-primary">Join</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<footer>
+    <p>&copy; 2024 Messaging App. All rights reserved.</p>
+</footer>
+{% endblock %}
