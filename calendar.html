@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Calendar</title>
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="dropdown-content">
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/messages">Messages</a>
+        <a href="/collaboration">Collaboration</a>
+        <a href="/teams">Teams</a>
+        <a href="/find_peer">Find Peer</a>
+        <a href="/help">Help</a>
+        <a href="/classes">Classes</a>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1>Event Calendar</h1>
+        </header>
+        
+        <div id="calendar"></div> <!-- Calendar will be rendered here -->
+
+        <!-- Modal for event details -->
+        <div id="eventModal" class="modal">
+            <div class="modal-content">
+                <h2>Event Details</h2>
+                <form id="eventForm">
+                    <label for="eventName">Event Name:</label>
+                    <input type="text" id="eventName" name="eventName" required>
+                    <br>
+                    <label for="eventLocation">Location:</label>
+                    <input type="text" id="eventLocation" name="eventLocation" required>
+                    <br>
+                    <label for="eventColor">Event Color:</label>
+                    <input type="color" id="eventColor" name="eventColor" value="#ff0000" required>
+                    <br>
+                    <label for="eventStartTime">Start Time:</label>
+                    <input type="time" id="eventStartTime" name="eventStartTime" required>
+                    <br>
+                    <label for="eventEndTime">End Time:</label>
+                    <input type="time" id="eventEndTime" name="eventEndTime" required>
+                    <br>
+                    <button type="submit">Save Event</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the calendar
+            var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+                initialView: 'dayGridMonth', // Default view
+                editable: true, // Allow event dragging and resizing
+                droppable: true, // Allow event dragging
+                events: "{{ url_for('get_events') }}", // Fetch events from the backend
+
+                // When a user clicks on a time slot
+                dateClick: function(info) {
+                    document.getElementById('eventModal').style.display = 'block';
+                    var eventDate = info.dateStr;
+
+                    // Pre-fill the date in the form
+                    document.getElementById('eventStartTime').value = "09:00"; // Default start time
+                    document.getElementById('eventEndTime').value = "10:00"; // Default end time
+
+                    // Handle form submission
+                    document.getElementById('eventForm').onsubmit = function(event) {
+                        event.preventDefault();
+                        var eventName = document.getElementById('eventName').value;
+                        var eventLocation = document.getElementById('eventLocation').value;
+                        var eventColor = document.getElementById('eventColor').value;
+                        var startTime = document.getElementById('eventStartTime').value;
+                        var endTime = document.getElementById('eventEndTime').value;
+
+                        // Combine date and time into a single datetime string
+                        var startDateTime = eventDate + 'T' + startTime;
+                        var endDateTime = eventDate + 'T' + endTime;
+
+                        // Send the event data to the backend
+                        fetch("{{ url_for('add_event') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                name: eventName,
+                                location: eventLocation,
+                                color: eventColor,
+                                start: startDateTime,
+                                end: endDateTime
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Close the modal and reload the calendar
+                            document.getElementById('eventModal').style.display = 'none';
+                            calendar.refetchEvents();
+                        })
+                        .catch(error => console.log(error));
+                    };
+                },
+            });
+
+            calendar.render();
+        });
+    </script>
+</body>
+</html>
