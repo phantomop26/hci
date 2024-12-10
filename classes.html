@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="container">
+        <header>
+            <h1>Welcome to Teams</h1>
+        </header>
+        <div class="container">
+            <h1>Classes at NYU</h1>
+            <ul>
+                {% for class in classes %}
+                <li>
+                    <a href="{{ url_for('class_details', course_id=class.id) }}">
+                        {{ class.name }} ({{ class.count }} students)
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
