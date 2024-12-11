@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'header.html' %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Peer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Find a Peer</h1>
+    
+    <!-- Form to submit answers -->
+    <form action="/submit" method="POST">
+        <label for="q1">What is your name?</label>
+        <input type="text" id="q1" name="q1" required><br>
+
+        <label for="q2">What is your email?</label>
+        <input type="text" id="q2" name="q2" required><br>
+
+        <label for="q3">What is your favorite programming language?</label>
+        <input type="text" id="q3" name="q3" required><br>
+
+        <label for="q4">What is your favorite hobby?</label>
+        <input type="text" id="q4" name="q4" required><br>
+
+        <label for="q5">What is your favorite book?</label>
+        <input type="text" id="q5" name="q5" required><br>
+
+        <label for="q6">What is your favorite travel destination?</label>
+        <input type="text" id="q6" name="q6" required><br>
+
+        <label for="q7">What is your favorite food?</label>
+        <input type="text" id="q7" name="q7" required><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    {% if warning_message %}
+        <h2>{{ warning_message }}</h2>
+    {% endif %}
+
+    {% if user %}
+        <h2>Match Found!</h2>
+        <p>Name: {{ user[0] }}</p>
+        <p>Email: {{ user[1] }}</p>
+        <p>Answer to Question 1 (Favorite programming language): {{ user[2] }}</p>
+        <p>Answer to Question 2 (Favorite hobby): {{ user[3] }}</p>
+        <p>Answer to Question 3 (Favorite book): {{ user[4] }}</p>
+        <p>Answer to Question 4 (Favorite travel destination): {{ user[5] }}</p>
+        <p>Answer to Question 5 (Favorite food): {{ user[6] }}</p>
+        <a href="{{ url_for('accept', user_id=user[0]) }}">Accept</a> | 
+        <a href="{{ url_for('reject', user_id=user[0]) }}">Reject</a>
+    {% endif %}
+</body>
+</html>
